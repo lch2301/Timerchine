@@ -27,6 +27,10 @@ dotnet publish IntervalTimer.csproj -c Release -r win-x64 --self-contained true 
 
 이 빌드에서는 yt-dlp와 Deno가 제외됩니다. FFmpeg와 ffprobe는 로컬 오디오 재생에 계속 사용됩니다.
 
+## 수정한 외부 도구 사용
+
+앱 소스의 `MediaFilesDirectory`와 `MediaIntegrityManifest` 빌드 옵션으로 수정한 FFmpeg·ffprobe·yt-dlp·Deno를 넣을 수 있습니다. `Build/Write-MediaIntegrity.ps1`로 새 해시 목록을 만들며 원 배포자의 서명 키는 필요하지 않습니다. 도구별 소스와 빌드 절차는 [외부 도구 수정 안내](MODIFYING-TOOLS.ko.md)를 참조하세요.
+
 ## 검증
 
 ```powershell

@@ -20,6 +20,10 @@
 
 프로그램이나 구성요소를 수정·재배포할 때는 해당 라이선스의 소스 제공, 저작권·라이선스 고지 유지 및 변경 표시 조건을 따라야 합니다. 타이머신의 라이선스는 외부 도구나 글꼴의 원래 라이선스를 대체하지 않습니다.
 
+도구의 수정본을 앱에 넣어 다시 빌드하는 방법은 [외부 도구 수정 안내](docs/MODIFYING-TOOLS.ko.md)에 있습니다. 새 도구의 해시와 공개 소스로 빌드할 수 있으며 원 배포자의 개인 서명 키는 필요하지 않습니다. 라이선스가 허용하는 수정과 해당 수정의 디버깅을 제한하는 추가 조건을 두지 않습니다.
+
+MPL-2.0이 적용되는 Certifi 및 해당 Rust 소스는 제3자 소스 ZIP의 `sources/`에 원본으로 제공하며 MPL 조건을 유지합니다. Python에 포함된 Microsoft Distributable Code에는 원래의 Microsoft 고지가 적용되며 `Assets/Media/YT-DLP-THIRD-PARTY.txt`와 실행 ZIP의 같은 고지에 보존되어 있습니다.
+
 라이선스 전문과 공식 안내:
 
 - [GNU GPL version 3](https://www.gnu.org/licenses/gpl-3.0.html)

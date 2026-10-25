@@ -47,4 +47,4 @@ Windows 10 22H2 이상 또는 Windows 11 x64를 대상으로 합니다. Windows�
 
 타이머신 자체 소스는 **GNU General Public License version 3 only (`GPL-3.0-only`)**로 제공합니다. 전문은 [LICENSE](LICENSE)에 있습니다. 이 라이선스의 조건에 따라 사용·수정·재배포할 수 있으며, 프로그램은 보증 없이 제공됩니다.
 
-외부 도구·라이브러리·글꼴은 각각의 라이선스를 따릅니다. [제3자 구성요소 고지](THIRD_PARTY_NOTICES.md), [소스 자료 안내](docs/SOURCES.ko.md), [소스 빌드·재배포 안내](docs/PUBLISHING.ko.md)를 함께 확인하세요.
+외부 도구·라이브러리·글꼴은 각각의 라이선스를 따릅니다. [제3자 구성요소 고지](THIRD_PARTY_NOTICES.md), [소스 자료 안내](docs/SOURCES.ko.md), [소스 빌드·재배포 안내](docs/PUBLISHING.ko.md), [외부 도구 수정 안내](docs/MODIFYING-TOOLS.ko.md)를 함께 확인하세요.

@@ -24,6 +24,8 @@
 
 Windows 10 22H2 이상 또는 Windows 11 x64용입니다. 실행 ZIP을 압축 해제하고 `Timerchine.exe`를 실행하세요. .NET 런타임을 별도로 설치하지 않고 사용할 수 있습니다.
 
+소스 ZIP과 제3자 소스·빌드 자료를 함께 제공합니다. 외부 도구 수정본의 해시를 생성하고 앱에 넣어 빌드하는 방법은 [외부 도구 수정 안내](https://github.com/lch2301/Timerchine/blob/main/docs/MODIFYING-TOOLS.ko.md)에 있습니다.
+
 ## 사용 시 알아둘 점
 
 - 1.2.0 실행 파일은 관리자 권한을 요청합니다.
