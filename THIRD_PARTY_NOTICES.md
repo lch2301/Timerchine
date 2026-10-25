@@ -1,30 +1,28 @@
-# 제3자 구성요소
+# 제3자 구성요소 고지
 
-타이머신 소스의 GPL-3.0-only 선택은 다음 구성요소의 기존 라이선스를 변경하지 않습니다.
+타이머신은 다음 오픈소스 구성요소를 사용합니다. 타이머신 자체의 GPL-3.0-only 라이선스와 별도로, 각 구성요소에는 원래의 저작권 고지와 라이선스가 적용됩니다.
 
-| 구성요소 | 사용 버전 | 라이선스 및 자료 |
+| 구성요소 | 1.2.0 기준 버전 | 라이선스 및 고지 위치 |
 | --- | --- | --- |
-| NAudio | 2.2.1 | MIT, NuGet 패키지 및 원 프로젝트 고지 |
-| .NET / Windows Desktop Runtime | 현재 기준 배포본 8.0.32 | MIT 및 포함된 제3자 고지; 새 게시 시 실제 런타임 확인 |
-| NanumSquareRound | 번들 Regular/Bold | SIL OFL 1.1, `Assets/Fonts/OFL.txt` |
+| NAudio | 2.2.1 | MIT, `Assets/Media/NAUDIO-LICENSE.txt` |
+| .NET / Windows Desktop Runtime | 8.0.32 | MIT 및 제3자 고지, 실행 ZIP의 `Licenses/DotNet` |
+| NanumSquareRound | Regular/Bold | SIL OFL 1.1, `Assets/Fonts/OFL.txt` |
 | Nunito | 고정 소스에서 생성한 Bold 700 | SIL OFL 1.1, `Assets/Fonts/Nunito-OFL.txt`, `Nunito-NOTICE.txt` |
 | FFmpeg / ffprobe | n9.0.2-35-g9a9b70bb8c, BtbN LGPL static | LGPLv3-or-later 및 하위 구성요소 조건, `Assets/Media/NOTICE.txt` |
 | yt-dlp Windows standalone | 2026.10.21 | 해당 묶음 실행 파일 GPLv3-or-later, `Assets/Media/YT-DLP-THIRD-PARTY.txt` |
 | Deno | 2.9.8 | MIT 및 제3자 조건, `Assets/Media/DENO-LICENSE.txt` |
 
-정확한 바이너리 해시는 `Assets/Media/integrity.json`에 있습니다. 소스에서 빌드할 때 도구 EXE는 별도로 복원하지만, 최종 단일 EXE에는 이 도구가 내장될 수 있습니다.
+실행 파일에 포함되는 도구의 SHA256은 `Assets/Media/integrity.json`에 있습니다. 배포 ZIP의 `Licenses` 폴더에는 라이선스 원문과 고지가 포함됩니다. 외부 링크 기능을 제외한 빌드는 yt-dlp와 Deno를 포함하지 않습니다.
 
-외부 링크를 제외하는 빌드는 yt-dlp와 Deno를 제외합니다. FFmpeg와 ffprobe의 라이선스 조건은 계속 적용됩니다.
+## 소스와 수정·재배포
 
-## 현재 검토 상태
+앱 소스와 제3자 원본 소스·빌드 자료의 위치는 [소스 자료 안내](docs/SOURCES.ko.md)를 확인하세요. GitHub의 자동 생성 Source code ZIP에는 저장소에 있는 앱 소스와 리소스가 들어 있으며, 제3자 소스 자료는 별도 파일로 구분됩니다.
 
-기존 검토 기록은 대응 소스의 실제 바이너리 포함 범위, 일부 제3자 고지의 연결, 단일 EXE에 내장한 도구의 결합 범위에 대해 미완료 항목을 기록하고 있습니다. 도구를 많이 수집했거나 타이머신 자체를 GPL로 공개했다는 사실만으로 이 항목이 완료되지는 않습니다.
+프로그램이나 구성요소를 수정·재배포할 때는 해당 라이선스의 소스 제공, 저작권·라이선스 고지 유지 및 변경 표시 조건을 따라야 합니다. 타이머신의 라이선스는 외부 도구나 글꼴의 원래 라이선스를 대체하지 않습니다.
 
-`docs/third-party-review-status.json`과 [공개 절차](docs/PUBLISHING.ko.md)를 참조하세요. 최종 배포에는 실제 포함 구성에 맞는 고지와 완전한 대응 소스·필요한 빌드 자료의 제공 방법을 확정해야 합니다.
+라이선스 전문과 공식 안내:
 
-공식 자료:
-
-- [yt-dlp licensing](https://github.com/yt-dlp/yt-dlp#licensing)
-- [FFmpeg legal information](https://ffmpeg.org/legal.html)
 - [GNU GPL version 3](https://www.gnu.org/licenses/gpl-3.0.html)
 - [GNU LGPL version 3](https://www.gnu.org/licenses/lgpl-3.0.html)
+- [FFmpeg license information](https://ffmpeg.org/legal.html)
+- [yt-dlp licensing](https://github.com/yt-dlp/yt-dlp#licensing)
