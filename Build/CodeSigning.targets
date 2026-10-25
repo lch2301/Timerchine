@@ -1,0 +1,22 @@
+<Project>
+  <!-- Work on copies so signatures never modify the SDK or NuGet caches. -->
+  <Target Name="SignTimerchineBundlePayload" BeforeTargets="GenerateSingleFileBundle"
+          DependsOnTargets="PrepareForBundle" Condition="'$(CodeSigningThumbprint)' != ''">
+    <Error Condition="'$(CodeSigningPayloadDirectory)' == '' Or '$(CodeSigningTool)' == '' Or '$(CodeSigningTimestampUrl)' == ''"
+           Text="A signing payload directory, SignTool and timestamp URL are required." />
+    <ItemGroup>
+      <_SigningPayload Include="@(FilesToBundle)"
+                       Condition="('%(FilesToBundle.Extension)' == '.dll' Or '%(FilesToBundle.Extension)' == '.exe') And '%(FilesToBundle.RelativePath)' != '$(AppHostFile)'">
+        <SignedPath>$(CodeSigningPayloadDirectory)\%(FilesToBundle.RelativePath)</SignedPath>
+      </_SigningPayload>
+    </ItemGroup>
+    <Copy SourceFiles="@(_SigningPayload)" DestinationFiles="@(_SigningPayload->'%(SignedPath)')" />
+    <Exec Command="powershell.exe -NoProfile -File &quot;$(MSBuildProjectDirectory)\Build\Sign-PEFiles.ps1&quot; -Directory &quot;$(CodeSigningPayloadDirectory)&quot; -CertificateThumbprint &quot;$(CodeSigningThumbprint)&quot; -StoreLocation &quot;$(CodeSigningStore)&quot; -SignTool &quot;$(CodeSigningTool)&quot; -TimestampUrl &quot;$(CodeSigningTimestampUrl)&quot;" />
+    <ItemGroup>
+      <FilesToBundle Remove="@(_SigningPayload)" />
+      <FilesToBundle Include="@(_SigningPayload->'%(SignedPath)')">
+        <RelativePath>%(_SigningPayload.RelativePath)</RelativePath>
+      </FilesToBundle>
+    </ItemGroup>
+  </Target>
+</Project>

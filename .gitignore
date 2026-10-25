@@ -1,0 +1,36 @@
+# Build products and local caches
+**/bin/
+**/obj/
+/.dotnet/
+/.vs/
+/.idea/
+/dist/
+/backups/
+/Audit/
+/Compliance/
+/Verification/results/
+**/__pycache__/
+
+# Executables are restored with Build/Fetch-Media.ps1, not stored in Git.
+*.exe
+*.dll
+*.pdb
+*.zip
+*.7z
+*.tar.gz
+
+# Per-user state, credentials and signing material
+*.user
+*.suo
+*.log
+.env
+.env.*
+*.pfx
+*.p12
+*.key
+settings.json
+settings.json.bak
+playlist-presets.json
+playlist-presets.json.bak
+OnlineAudio/
+Thumbnails/

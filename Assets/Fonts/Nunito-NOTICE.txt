@@ -1,0 +1,11 @@
+Timer display font: Nunito Bold (weight 700), SIL Open Font License 1.1.
+Copyright 2014 The Nunito Project Authors (https://github.com/googlefonts/nunito).
+Source: https://github.com/googlefonts/nunito/tree/8c6a9bb9732545b9ed53f29ec5e1ab0ff53c4e6f
+Upstream variable font: fonts/variable/Nunito[wght].ttf
+Upstream SHA256: BB55A5CA5C2042335B3991AF27C4D0705D0EF41CAC6164AC737FD8F2A1E85207
+The bundled NunitoTimer-Bold.ttf is a static weight-700 instance generated with
+fontTools.varLib.instancer.instantiateVariableFont(wght=700, updateFontNames=True)
+for Windows GDI/GDI+ edit-control compatibility. All other app fonts are unchanged.
+Bundled static instance SHA256: 6A9D20954F450786FCFC434370E7F94C0EFF30E303516A097540BB5E73A013FE
+The upstream source is retained in Assets/Fonts/Source/Nunito-variable.ttf.
+The license and copyright notice are included in Nunito-OFL.txt.

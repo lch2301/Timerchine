@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\IntervalTimer.ico</ApplicationIcon>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Timerchine</AssemblyName>
+    <Product>Timerchine</Product>
+    <Title>Timerchine</Title>
+    <Version>1.2.0</Version>
+    <Description>Timerchine - multi-timer desktop app</Description>
+    <RootNamespace>IntervalTimer</RootNamespace>
+    <StartupObject>IntervalTimer.MultiTimerApp</StartupObject>
+    <DefaultItemExcludes>$(DefaultItemExcludes);backups\**;Verification\**;dist\**;Compliance\**</DefaultItemExcludes>
+    <EnableExternalLinks Condition="'$(EnableExternalLinks)' == ''">true</EnableExternalLinks>
+    <MediaFilesDirectory Condition="'$(MediaFilesDirectory)' == ''">Assets\Media</MediaFilesDirectory>
+    <MediaIntegrityManifest Condition="'$(MediaIntegrityManifest)' == ''">Assets\Media\integrity.json</MediaIntegrityManifest>
+    <DefineConstants Condition="'$(EnableExternalLinks)' == 'true'">$(DefineConstants);TIMERCHINE_EXTERNAL_LINKS</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Program.cs;ResponsiveTimerForm.cs;HotkeySettingsForm.cs" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <EmbeddedResource Include="Assets\IntervalTimer.ico" />
+    <EmbeddedResource Include="Assets\Fonts\*.ttf;Assets\Fonts\OFL.txt;Assets\Fonts\Nunito-*.txt" />
+    <EmbeddedResource Include="$(MediaFilesDirectory)\ffmpeg.exe;$(MediaFilesDirectory)\ffprobe.exe" LogicalName="IntervalTimer.Media.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Assets\Media\*.txt" />
+    <EmbeddedResource Include="$(MediaFilesDirectory)\yt-dlp.exe;$(MediaFilesDirectory)\deno.exe" LogicalName="IntervalTimer.Media.%(Filename)%(Extension)" Condition="'$(EnableExternalLinks)' == 'true'" />
+    <EmbeddedResource Include="$(MediaIntegrityManifest)" LogicalName="IntervalTimer.Media.integrity.json" />
+    <EmbeddedResource Include="$(MediaFilesDirectory)\SIGNING-NOTICE.txt" LogicalName="IntervalTimer.Media.SIGNING-NOTICE.txt" Condition="Exists('$(MediaFilesDirectory)\SIGNING-NOTICE.txt')" />
+    <EmbeddedResource Include="Assets\Legal\ExternalLinkUsage.ko.txt" WithCulture="false" LogicalName="IntervalTimer.Legal.ExternalLinkUsage.ko.txt" />
+  </ItemGroup>
+  <Import Project="Build\CodeSigning.targets" />
+</Project>

@@ -1,0 +1,31 @@
+Online audio support — unmodified standalone tools invoked as separate processes.
+Online tools are bundled only when the EnableExternalLinks build option is true.
+No browser cookies, account passwords, or authentication tokens are collected.
+External links require the user's confirmation of download/alarm-use rights
+in the app settings. The saved acknowledgement applies to all timer dialogs.
+Before downloading, Timerchine checks extractor metadata for access restrictions
+and DRM indicators and pins a single direct HTTP/HTTPS file. Proxy/geo bypass,
+encrypted/fragmented manifests, and force-playing DRM formats are not enabled.
+The YouTube signature/n JavaScript challenge processing remains available.
+These restrictions do not establish that any particular use is lawful or that
+the challenge processing falls outside statutory anti-circumvention rules.
+
+yt-dlp 2026.10.21
+Source and release: https://github.com/yt-dlp/yt-dlp/releases/tag/2026.10.21
+Source archive: https://github.com/yt-dlp/yt-dlp/archive/refs/tags/2026.10.21.tar.gz
+Build instructions: https://github.com/yt-dlp/yt-dlp/tree/2026.10.21/bundle
+yt-dlp itself: Unlicense (YT-DLP-LICENSE.txt).
+The official Windows executable includes GPLv3+ components; the combined
+standalone tool is GPLv3+. See GPLv3.txt and YT-DLP-THIRD-PARTY.txt for included
+third-party notices and their corresponding source locations.
+SHA256 yt-dlp.exe: 33121D192D706E62F684A06F80918E3F3A8BA52AC3A65213B6951C39C7D9F555
+
+Deno 2.9.8
+Source and release: https://github.com/denoland/deno/releases/tag/v2.9.8
+Source archive: https://github.com/denoland/deno/archive/refs/tags/v2.9.8.tar.gz
+MIT license: DENO-LICENSE.txt.
+SHA256 deno.exe: 924397800533D3EB0ED0C889B20AD70E18B970D93ACD8135BC043F425E528266
+
+Downloaded audio is cached under the current user's LocalAppData/IntervalTimer/OnlineAudio.
+Only the source link is stored in timer settings. Prepared local audio is reused
+for playback, looping, reverse-alarm pause/resume, and audio progress reporting.
