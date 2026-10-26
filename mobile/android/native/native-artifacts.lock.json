@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "ffmpegRevision": "9a9b70bb8c",
+  "ndk": "28.2.13676358",
+  "sources": {
+    "native/ffmpeg/Build-FFmpeg.sh": "03cffad27ed8cfb1c191ac10e211eb9970077f226a1150592257828ecac59fd3",
+    "native/ffmpeg/FFmpeg-9a9b70bb8c.tar.gz": "afce1d0954ff7b6186f8971790bb5523ecede9aedcc045b36730feb35cdc8116",
+    "native/deps/build_deps.py": "3a8ad59d16d155137be5af77bbe9dd8f75dfac180b712c794483b3caf9ed3f84",
+    "native/deps/sources/ffdep-dav1d-9711965b60bb692ae24004659acf61f5c7d9ed61.tar.gz": "d4956d2a926011e242659e0d0e21b0213d61e14e853fa5585a8b79b2a0f115ba",
+    "native/deps/sources/ffdep-game-music-emu-f68963b1de0633149b05732113d3c3113c6f63a1.tar.gz": "c4c47251e12b2b147eabb54499c94cf3b607b68f830e231a396f541f4897e74e",
+    "native/deps/sources/ffdep-openmpt-f83cedb0cd5446e4dfaa83ac97e3087107e26767.tar.gz": "222de6e3e8cb654f7eaae180ddfceed173d4b70797b8d1f902c56e8d4b68fb2f",
+    "native/deps/sources.lock.json": "3776728db0fd3a0d18cfed40d3593edd681a03488abaad9d07a665c205cd26ca"
+  },
+  "artifacts": {
+    "app/src/main/jniLibs/arm64-v8a/libffmpeg.so": "6a78dceccbd419e7092536c780c3366a8186c55aeaad221c320ab2265d043621",
+    "app/src/main/jniLibs/arm64-v8a/libffprobe.so": "34d09126f836e13987a4e6e32db0ff66b0e07b527dee36ddbc9aa4ad3f71a60a",
+    "app/src/main/jniLibs/armeabi-v7a/libffmpeg.so": "aef38cb5fde54275f5a56c0de3b7ce23240192e0011359afa6757b236b14ab14",
+    "app/src/main/jniLibs/armeabi-v7a/libffprobe.so": "44e661cfdd1c053418d169f121457ff9632f92a405e66e5d341cd5074b12ea73",
+    "app/src/main/jniLibs/x86_64/libffmpeg.so": "9baf39dec2b306f0f4bb9b106c598f8c78187ff5dc011469d17f1fc938b1a43a",
+    "app/src/main/jniLibs/x86_64/libffprobe.so": "60e3f891088bb8f47628335c78ce23bccf934ea65971358724a8fbcb38e0443a",
+    "app/src/main/jniLibs/x86/libffmpeg.so": "2dc3419335ce179174487e80b6cdc6655cf91d03f38aecbf3d59e68644678588",
+    "app/src/main/jniLibs/x86/libffprobe.so": "bd5daf026c047e5c11e4f0a4e6f8e6ef76d011392330d7b68dfd555ebb899c0c"
+  }
+}

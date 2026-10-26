@@ -1,0 +1,95 @@
+plugins {
+    id 'com.android.application'
+}
+
+apply from: rootProject.file('strip-python-runtime.gradle')
+apply from: rootProject.file('collect-runtime-notices.gradle')
+
+def signingEnvironmentNames = [
+        'TIMERCHINE_KEYSTORE',
+        'TIMERCHINE_KEYSTORE_PASSWORD',
+        'TIMERCHINE_KEY_ALIAS',
+        'TIMERCHINE_KEY_PASSWORD'
+]
+def signingValues = signingEnvironmentNames.collectEntries { name ->
+    [(name): System.getenv(name)]
+}
+def suppliedSigningValues = signingValues.values().count { it != null && !it.isEmpty() }
+if (suppliedSigningValues != 0 && suppliedSigningValues != signingEnvironmentNames.size()) {
+    throw new GradleException('Release signing requires all four TIMERCHINE_* signing environment variables, or none for an unsigned APK.')
+}
+def releaseSigningAvailable = suppliedSigningValues == signingEnvironmentNames.size()
+
+android {
+    namespace 'io.github.lch2301.timerchine'
+    compileSdk 36
+    buildToolsVersion '36.0.0'
+
+    defaultConfig {
+        applicationId 'io.github.lch2301.timerchine'
+        minSdk 26
+        targetSdk 36
+        versionCode 12000
+        versionName '1.2.0'
+        testInstrumentationRunner 'io.github.lch2301.timerchine.SmokeInstrumentation'
+    }
+
+    signingConfigs {
+        if (releaseSigningAvailable) {
+            release {
+                storeFile file(signingValues['TIMERCHINE_KEYSTORE'])
+                storePassword signingValues['TIMERCHINE_KEYSTORE_PASSWORD']
+                keyAlias signingValues['TIMERCHINE_KEY_ALIAS']
+                keyPassword signingValues['TIMERCHINE_KEY_PASSWORD']
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (releaseSigningAvailable) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds true
+    }
+
+    packaging {
+        jniLibs { useLegacyPackaging = true }
+    }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.returnDefaultValues = false
+    }
+}
+
+dependencies {
+    implementation 'io.github.junkfood02.youtubedl-android:library:0.18.1'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
+}
+
+// Keep source and worker classpaths consistent in localized Windows checkouts.
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+tasks.withType(Test).configureEach {
+    defaultCharacterEncoding = 'UTF-8'
+}

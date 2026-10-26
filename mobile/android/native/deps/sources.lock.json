@@ -1,0 +1,44 @@
+[
+  {
+    "recipe": "scripts.d/50-gme.sh",
+    "repo": "https://github.com/libgme/game-music-emu.git",
+    "revision": "f68963b1de0633149b05732113d3c3113c6f63a1",
+    "archive_url": "https://codeload.github.com/libgme/game-music-emu/tar.gz/f68963b1de0633149b05732113d3c3113c6f63a1",
+    "recursive_dependency_check_required": true,
+    "custom_download": false,
+    "status": "SOURCE_ARCHIVE_DOWNLOADED",
+    "file": "sources/ffdep-game-music-emu-f68963b1de0633149b05732113d3c3113c6f63a1.tar.gz",
+    "url": "https://codeload.github.com/libgme/game-music-emu/tar.gz/f68963b1de0633149b05732113d3c3113c6f63a1",
+    "bytes": 352482,
+    "sha256": "c4c47251e12b2b147eabb54499c94cf3b607b68f830e231a396f541f4897e74e",
+    "upstream_hash_verified": false
+  },
+  {
+    "recipe": "scripts.d/50-dav1d.sh",
+    "repo": "https://code.videolan.org/videolan/dav1d.git",
+    "revision": "9711965b60bb692ae24004659acf61f5c7d9ed61",
+    "archive_url": "https://code.videolan.org/videolan/dav1d/-/archive/9711965b60bb692ae24004659acf61f5c7d9ed61/dav1d-9711965b60bb692ae24004659acf61f5c7d9ed61.tar.gz",
+    "recursive_dependency_check_required": true,
+    "custom_download": false,
+    "status": "SOURCE_ARCHIVE_DOWNLOADED",
+    "file": "sources/ffdep-dav1d-9711965b60bb692ae24004659acf61f5c7d9ed61.tar.gz",
+    "url": "https://code.videolan.org/videolan/dav1d/-/archive/9711965b60bb692ae24004659acf61f5c7d9ed61/dav1d-9711965b60bb692ae24004659acf61f5c7d9ed61.tar.gz",
+    "bytes": 1752503,
+    "sha256": "d4956d2a926011e242659e0d0e21b0213d61e14e853fa5585a8b79b2a0f115ba",
+    "upstream_hash_verified": false
+  },
+  {
+    "recipe": "scripts.d/50-openmpt.sh",
+    "repo": "https://github.com/OpenMPT/openmpt.git",
+    "revision": "f83cedb0cd5446e4dfaa83ac97e3087107e26767",
+    "archive_url": "https://codeload.github.com/OpenMPT/openmpt/tar.gz/f83cedb0cd5446e4dfaa83ac97e3087107e26767",
+    "recursive_dependency_check_required": true,
+    "custom_download": false,
+    "status": "SOURCE_ARCHIVE_DOWNLOADED",
+    "file": "sources/ffdep-openmpt-f83cedb0cd5446e4dfaa83ac97e3087107e26767.tar.gz",
+    "url": "https://codeload.github.com/OpenMPT/openmpt/tar.gz/f83cedb0cd5446e4dfaa83ac97e3087107e26767",
+    "bytes": 31421876,
+    "sha256": "222de6e3e8cb654f7eaae180ddfceed173d4b70797b8d1f902c56e8d4b68fb2f",
+    "upstream_hash_verified": false
+  }
+]

@@ -1,0 +1,33 @@
+# Android SDK paths and local IDE state
+local.properties
+.idea/
+*.iml
+.gradle/
+.kotlin/
+.cxx/
+.externalNativeBuild/
+captures/
+
+# Generated build and release artifacts
+**/build/
+native/build-deps/
+native/deps/work/
+dist/
+*.apk
+*.aab
+*.apks
+*.hprof
+
+# Private signing material
+*.jks
+*.keystore
+*.p12
+*.pfx
+signing.properties
+keystore.properties
+.env
+.env.*
+
+# Retained native preferred sources are part of the Android distribution.
+!native/**/*.tar.gz
+!native/**/*.tar.xz

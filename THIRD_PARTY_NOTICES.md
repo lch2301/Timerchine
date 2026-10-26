@@ -30,3 +30,7 @@ MPL-2.0이 적용되는 Certifi 및 해당 Rust 소스는 제3자 소스 ZIP의 
 - [GNU LGPL version 3](https://www.gnu.org/licenses/lgpl-3.0.html)
 - [FFmpeg license information](https://ffmpeg.org/legal.html)
 - [yt-dlp licensing](https://github.com/yt-dlp/yt-dlp#licensing)
+
+## Android 구성요소
+
+이 문서의 Windows 미디어 도구·.NET 구성요소는 Android APK에 포함되지 않습니다. Android 버전의 포함 글꼴, 빌드 도구와 라이선스는 [Android 제3자 고지](mobile/android/THIRD_PARTY_NOTICES.md)를 확인하세요.

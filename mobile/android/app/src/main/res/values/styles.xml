@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Timerchine.Base" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#9AC6BA</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#101720</item>
+        <item name="android:navigationBarColor">#101720</item>
+        <item name="android:windowBackground">#101720</item>
+        <item name="android:colorBackground">#101720</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+    <style name="Theme.Timerchine" parent="Theme.Timerchine.Base" />
+</resources>

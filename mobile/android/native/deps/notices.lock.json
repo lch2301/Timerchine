@@ -1,0 +1,58 @@
+[
+  {
+    "library": "gme",
+    "upstream_file": "license.txt",
+    "asset": "Game_Music_Emu-LGPL-2.1.txt",
+    "sha256": "d2efc89fbb7533572a472d34e07964951810a3a4f8d3159ecc2dcaa1452c5c26",
+    "copy": "complete original file"
+  },
+  {
+    "library": "gme",
+    "upstream_file": "readme.txt",
+    "asset": "Game_Music_Emu-upstream-readme.txt",
+    "sha256": "ebb2ccb9a60e178b24cbd815d187cbfd6d30fbda04cfc09346bbaf84e6b936bc",
+    "copy": "complete original file"
+  },
+  {
+    "library": "gme",
+    "upstream_file": "gme/ext/LICENSE",
+    "asset": "Game_Music_Emu-emu2413-MIT.txt",
+    "sha256": "8fb093f26ed0d78c8ca033bbec7063ac5b34c5d2475e6bd121d03ccfaaf2355f",
+    "copy": "complete original file"
+  },
+  {
+    "library": "dav1d",
+    "upstream_file": "COPYING",
+    "asset": "dav1d-COPYING.txt",
+    "sha256": "dd92c3c2247c5651606fc23a5e2d6a1ebc5ace9a3e49cbde0e12f05ad1cb1ee5",
+    "copy": "complete original file"
+  },
+  {
+    "library": "openmpt",
+    "upstream_file": "LICENSE",
+    "asset": "libopenmpt-LICENSE.txt",
+    "sha256": "2c999e99533c10a347916a72e075bacf10fcedeff793bd90d41d812b46161da2",
+    "copy": "complete original file"
+  },
+  {
+    "library": "openmpt",
+    "upstream_file": "src/mpt/LICENSE.BSL-1.0.txt",
+    "asset": "libopenmpt-mpt-BSL-1.0.txt",
+    "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566",
+    "copy": "complete original file"
+  },
+  {
+    "library": "openmpt",
+    "upstream_file": "include/minimp3/LICENSE",
+    "asset": "libopenmpt-minimp3-LICENSE.txt",
+    "sha256": "6a1ee543e5282cd9061881edf462e6fdab181f328da71fc2c9a6950a80e94d01",
+    "copy": "complete original file"
+  },
+  {
+    "library": "openmpt",
+    "upstream_file": "include/stb_vorbis/stb_vorbis.c",
+    "asset": "libopenmpt-stb_vorbis-LICENSE.txt",
+    "sha256": "7587efcca32db8f95bf5860dea6dfa4be410ee723e1964db3689c8ddf2a2e4a9",
+    "copy": "complete final original license comment"
+  }
+]

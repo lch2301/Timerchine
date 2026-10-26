@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt" android:width="96dp" android:height="96dp"
+    android:viewportWidth="96" android:viewportHeight="96">
+    <!-- Exact TimerBranding.DrawMark geometry from PC 1.2.0. -->
+    <path android:pathData="M24,2 H72 A22,22 0,0 1,94 24 V72 A22,22 0,0 1,72 94 H24 A22,22 0,0 1,2 72 V24 A22,22 0,0 1,24 2 Z"
+        android:strokeColor="#426263" android:strokeWidth="1.4">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="0" android:startY="0" android:endX="96" android:endY="96" android:startColor="#233339" android:endColor="#101921" /></aapt:attr>
+    </path>
+    <path android:pathData="M29,26 L67,26 C67,38 56,42 51,48 C56,54 67,58 67,70 L29,70 C29,58 40,54 45,48 C40,42 29,38 29,26 Z"
+        android:strokeColor="#99EFD8" android:strokeWidth="3.5" android:strokeLineJoin="round" android:strokeLineCap="round">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="24" android:startY="24" android:endX="72" android:endY="72" android:startColor="#2670E0C5" android:endColor="#0870E0C5" /></aapt:attr>
+    </path>
+    <path android:pathData="M36,34 L60,34 L48,43 Z M35,64 L48,54 L61,64 Z">
+        <aapt:attr name="android:fillColor"><gradient android:type="linear" android:startX="36" android:startY="35" android:endX="59" android:endY="66" android:startColor="#BFFBE7" android:endColor="#5BCFB1" /></aapt:attr>
+    </path>
+    <path android:pathData="M48,45 L48,55" android:strokeColor="#95EBD0" android:strokeWidth="1.6" />
+    <path android:pathData="M26,20 L70,20 M26,76 L70,76" android:strokeColor="#70E0C5" android:strokeWidth="4.4" android:strokeLineCap="round" />
+</vector>

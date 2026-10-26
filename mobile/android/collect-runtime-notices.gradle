@@ -1,0 +1,65 @@
+import groovy.json.JsonOutput
+import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
+
+def generatedNotices = layout.buildDirectory.dir('generated/runtimeNoticeAssets')
+def collectRuntimeNotices = tasks.register('collectRuntimeNotices') {
+    inputs.files(configurations.releaseRuntimeClasspath)
+    inputs.dir(file('src/main/assets/licenses/external'))
+    inputs.file(file('src/main/assets/licenses/ExternalMedia-NOTICE.txt'))
+    inputs.file(rootProject.file('native/ffmpeg/COPYING.LGPLv2.1'))
+    outputs.dir(generatedNotices)
+    doLast {
+        File root = new File(generatedNotices.get().asFile, 'licenses/dependencies')
+        root.mkdirs()
+        List inventory = []
+        configurations.releaseRuntimeClasspath.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+            String component = artifact.moduleVersion.id.toString()
+            String key = component.replaceAll('[^a-zA-Z0-9._-]', '_')
+            File directory = new File(root, key)
+            List notices = []
+            Closure saveNotice = { String name, byte[] bytes ->
+                String filename = name.replaceAll('[^a-zA-Z0-9._-]', '_')
+                directory.mkdirs()
+                new File(directory, filename).bytes = bytes
+                notices.add(filename)
+            }
+            File input = artifact.file
+            if (input.name.endsWith('.jar') || input.name.endsWith('.aar')) {
+                new ZipFile(input).withCloseable { zip ->
+                    zip.entries().each { entry ->
+                        String name = entry.name
+                        if (!entry.directory && name.toUpperCase(Locale.ROOT).matches('.*(?:^|/)(?:LICENSE|NOTICE|COPYING|DEPENDENCIES)[^/]*')) {
+                            zip.getInputStream(entry).withCloseable { stream -> saveNotice(name, stream.bytes) }
+                        }
+                        if (name == 'classes.jar') {
+                            new ZipInputStream(zip.getInputStream(entry)).withCloseable { nested ->
+                                java.util.zip.ZipEntry child
+                                while ((child = nested.nextEntry) != null) {
+                                    if (!child.directory && child.name.toUpperCase(Locale.ROOT).matches('.*(?:^|/)(?:LICENSE|NOTICE|COPYING|DEPENDENCIES)[^/]*')) {
+                                        ByteArrayOutputStream data = new ByteArrayOutputStream()
+                                        nested.transferTo(data)
+                                        saveNotice('classes_' + child.name, data.toByteArray())
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            inventory.add([component: component, notices: notices])
+        }
+        new File(root, 'runtime-dependencies.json').text = JsonOutput.prettyPrint(JsonOutput.toJson(inventory))
+        StringBuilder combined = new StringBuilder(file('src/main/assets/licenses/ExternalMedia-NOTICE.txt').getText('UTF-8'))
+        List<File> originals = fileTree('src/main/assets/licenses/external').files.toList().sort { it.name }
+        originals.add(rootProject.file('native/ffmpeg/COPYING.LGPLv2.1'))
+        originals.addAll(fileTree(root).files.findAll { it.name != 'runtime-dependencies.json' }.sort { it.absolutePath })
+        originals.each { notice ->
+            combined.append('\n\n========== ').append(notice.name).append(' ==========\n\n')
+            combined.append(notice.getText('UTF-8'))
+        }
+        new File(generatedNotices.get().asFile, 'licenses/THIRD_PARTY_NOTICES.txt').setText(combined.toString(), 'UTF-8')
+    }
+}
+android.sourceSets.main.assets.srcDir(generatedNotices)
+tasks.named('preBuild').configure { dependsOn collectRuntimeNotices }

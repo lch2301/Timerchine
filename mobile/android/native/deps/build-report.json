@@ -1,0 +1,72 @@
+{
+  "ndk": "28.2.13676358",
+  "android_api": 26,
+  "cmake": "3.31.6",
+  "meson": "1.9.2",
+  "gme_version": "0.6.6",
+  "openmpt_version": "0.9.0-pre.13",
+  "dav1d_version": "1.5.4",
+  "runtime_decoding_tested": false,
+  "abi_results": [
+    {
+      "abi": "arm64-v8a",
+      "ndk": "28.2.13676358",
+      "api": 26,
+      "libraries": [
+        "dav1d"
+      ],
+      "prefix": "D:\\gpt\\APP\\mobile-port\\android\\native\\build-deps\\arm64-v8a",
+      "all_library_link_check": true,
+      "archives": {
+        "libdav1d.a": "126b9b6f38228c9540b12f3f4dfbc97d51fe01ebdf0d45b69af7144b5f482527",
+        "libgme.a": "023a738e42eccfd0f1233d961b36fe07e928b543cba4ada8a08624af588d3058",
+        "libopenmpt.a": "67a6ac12aa600280ba6800c35fb881fe3c85ab592444653051f8c5871a032da5"
+      }
+    },
+    {
+      "abi": "armeabi-v7a",
+      "ndk": "28.2.13676358",
+      "api": 26,
+      "libraries": [
+        "dav1d"
+      ],
+      "prefix": "D:\\gpt\\APP\\mobile-port\\android\\native\\build-deps\\armeabi-v7a",
+      "all_library_link_check": true,
+      "archives": {
+        "libdav1d.a": "536dc9954702418553d7444f0cde13ddddb1bf9a242e738f4b04c84d7a531478",
+        "libgme.a": "f723504e3257b34389eec413c11e6f817b260368666e81463480a7a271179243",
+        "libopenmpt.a": "e683fbcc333c49184b32f96c8bdba6a29f69a584e9bb28d82e50914454b9e579"
+      }
+    },
+    {
+      "abi": "x86",
+      "ndk": "28.2.13676358",
+      "api": 26,
+      "libraries": [
+        "dav1d"
+      ],
+      "prefix": "D:\\gpt\\APP\\mobile-port\\android\\native\\build-deps\\x86",
+      "all_library_link_check": true,
+      "archives": {
+        "libdav1d.a": "56431710f2ccedad7257200fb1990d15a0b360454d79552736f6c7f6c949d941",
+        "libgme.a": "303d0fdf8c8e3b9cab1f70adf5fc386e140c2a20facf5fc389b9414901e86dcb",
+        "libopenmpt.a": "fe0b9be1f77e2ab394badffe30867c07b68511605c96df61cde8648b2ba16cee"
+      }
+    },
+    {
+      "abi": "x86_64",
+      "ndk": "28.2.13676358",
+      "api": 26,
+      "libraries": [
+        "dav1d"
+      ],
+      "prefix": "D:\\gpt\\APP\\mobile-port\\android\\native\\build-deps\\x86_64",
+      "all_library_link_check": true,
+      "archives": {
+        "libdav1d.a": "4b22e060d90d9bf03103626088c487c4765e54ca55a270db74005d2efb1277d7",
+        "libgme.a": "5ad9550dded05ee0c7428985d64af1a9ad3f2846a4ee6916d9eb0c57cad5883f",
+        "libopenmpt.a": "702ebd5783b5023a577a729dacdbb2b787572607a39373b4b3d37b8c9236aa3d"
+      }
+    }
+  ]
+}

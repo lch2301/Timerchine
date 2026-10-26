@@ -1,0 +1,53 @@
+import org.gradle.api.artifacts.transform.TransformAction
+import org.gradle.api.artifacts.transform.TransformParameters
+import org.gradle.api.artifacts.transform.TransformOutputs
+import org.gradle.api.artifacts.transform.InputArtifact
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
+
+abstract class TrimPythonRuntime implements TransformAction<TrimPythonRuntime.Parameters> {
+    interface Parameters extends TransformParameters {
+        @Input Property<String> getPythonExecutable()
+        @InputFile @PathSensitive(PathSensitivity.RELATIVE) RegularFileProperty getScript()
+    }
+
+    @InputArtifact @PathSensitive(PathSensitivity.NONE)
+    abstract Provider<FileSystemLocation> getInputArtifact()
+
+    @Inject abstract ExecOperations getExecOperations()
+
+    @Override void transform(TransformOutputs outputs) {
+        File original = inputArtifact.get().asFile
+        File target = outputs.file('timerchine-' + original.name)
+        execOperations.exec {
+            commandLine parameters.pythonExecutable.get(), parameters.script.get().asFile.absolutePath,
+                    original.absolutePath, target.absolutePath
+        }
+    }
+}
+
+def trimmedPython = Attribute.of('io.github.lch2301.timerchine.trimmedPython', Boolean)
+dependencies {
+    attributesSchema { attribute(trimmedPython) }
+    artifactTypes.maybeCreate('aar').attributes.attribute(trimmedPython, false)
+    registerTransform(TrimPythonRuntime) {
+        from.attribute(trimmedPython, false)
+        to.attribute(trimmedPython, true)
+        parameters {
+            pythonExecutable.set(providers.environmentVariable('TIMERCHINE_BUILD_PYTHON').orElse('python'))
+            script.set(rootProject.layout.projectDirectory.file('scripts/strip_python_runtime.py'))
+        }
+    }
+}
+configurations.configureEach {
+    if (canBeResolved) attributes.attribute(trimmedPython, true)
+}

@@ -8,7 +8,13 @@
 
 역알람은 음악이 멈추는 변화를 알아차릴 수 있는 상황에 어울립니다. 수면 중처럼 그 변화를 놓치기 쉬운 상황에서는 소리가 울리는 기본 알람을 사용하세요.
 
-## 주요 기능
+## Android 버전
+
+Android 8.0 이상용 소스는 [mobile/android](mobile/android)에 있습니다. 기본 알람·역알람·재생 목록·프리셋을 제공하며, Windows의 트레이 최소화는 **화면을 꺼도 이어지는 백그라운드 재생과 미디어 알림 제어**로 바뀌었습니다.
+
+Android APK와 해당 소스는 [Android 릴리스](https://github.com/lch2301/Timerchine/releases/tag/android-v1.2.0)에서 제공합니다. 모바일의 파일·링크 지원 범위, 설치와 사용 방법은 [Android 안내](mobile/android/README.md)를 확인하세요.
+
+## 주요 기능 (Windows)
 
 - 여러 타이머와 개별·전체 시작, 중단, 재시작
 - 기본 알람과 선택형 역알람, 타이머별 음량 및 단축키

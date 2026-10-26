@@ -1,0 +1,22 @@
+[
+  {
+    "asset": "AndroidX-Apache-2.0-LICENSE.txt",
+    "source_url": "https://raw.githubusercontent.com/androidx/androidx/androidx-main/LICENSE.txt",
+    "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+  },
+  {
+    "asset": "Kotlin-1.7.22-Apache-2.0-LICENSE.txt",
+    "source_url": "https://raw.githubusercontent.com/JetBrains/kotlin/v1.7.22/license/LICENSE.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  {
+    "asset": "JetBrains-Annotations-Apache-2.0-LICENSE.txt",
+    "source_url": "https://raw.githubusercontent.com/JetBrains/java-annotations/master/LICENSE.txt",
+    "sha256": "8c1e966c7855fb54027bcaf6ebe7a43abe4785791e8cf9148c363761d493d097"
+  },
+  {
+    "asset": "Guava-ListenableFuture-Apache-2.0-LICENSE.txt",
+    "source_url": "https://raw.githubusercontent.com/google/guava/v18.0/COPYING",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  }
+]
