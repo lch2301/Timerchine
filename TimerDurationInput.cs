@@ -74,8 +74,10 @@ internal sealed class TimerDurationInput : UserControl
                 if (ReadOnly) return;
                 if (!IsEditing) { IsEditing = true; dirty = false; }
                 part.SelectAll();
-                BeginInvoke(new Action(() => { if (!IsDisposed && part.Focused) part.SelectAll(); }));
             };
+            // Every click begins entry for the whole HH/MM/SS component. Native
+            // caret hit testing must not turn a click on the left digit into tens editing.
+            part.MouseUp += (_, e) => { if (!ReadOnly && e.Button == MouseButtons.Left) part.SelectAll(); };
             part.TextChanged += (_, _) => {
                 if (synchronizing || ReadOnly) return;
                 MarkInputReceived();
@@ -129,7 +131,15 @@ internal sealed class TimerDurationInput : UserControl
                 { e.SuppressKeyPress = true; parts[index - 1].Focus(); }
             };
             part.KeyPress += (_, e) => {
-                if (e.KeyChar is ':' or '：')
+                if (!ReadOnly && e.KeyChar is >= '0' and <= '9')
+                {
+                    e.Handled = true;
+                    var previous = part.SelectionLength > 0 ? 0 : ParsePart(part.Text, index);
+                    part.Text = Math.Clamp(previous * 10 + e.KeyChar - '0', 0, index == 0 ? 99 : 59).ToString("00");
+                    part.SelectionStart = part.Text.Length;
+                    MarkInputReceived();
+                }
+                else if (e.KeyChar is ':' or '：')
                 {
                     e.Handled = true;
                     if (!ReadOnly && index < 2) parts[index + 1].Focus();

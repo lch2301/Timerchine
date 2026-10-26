@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.MotionEvent;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -78,6 +80,37 @@ public class DesktopParityUiTest {
         assertEquals(73,AppStore.load(activity).timers.get(0).spec.volume);
         assertEquals(3723,AppStore.load(activity).timers.get(0).spec.durationSeconds);
         assertEquals("새 목록",AppStore.load(activity).presets.get(1).name);
+    }
+
+    @Test public void tappingEitherDigitAlwaysStartsAtOnesIncludingRepeatedTapsAndSoftKeyboard() {
+        List<EditText> fields = timeFields(root);
+        for (int index = 0; index < fields.size(); index++) {
+            EditText field = fields.get(index);
+            for (int position = 0; position < 2; position++) {
+                field.setText("34"); field.requestFocus(); field.setSelection(position);
+                tap(field, position == 0 ? 1 : field.getWidth() - 1);
+                assertEquals(0, field.getSelectionStart()); assertEquals(2, field.getSelectionEnd());
+                InputConnection keyboard = field.onCreateInputConnection(new EditorInfo());
+                assertNotNull(keyboard);
+                keyboard.commitText("1", 1); assertEquals("01", field.getText().toString());
+                keyboard.commitText("2", 1); assertEquals("12", field.getText().toString());
+                tap(field, 1);
+                keyboard.commitText("7", 1); assertEquals("07", field.getText().toString());
+                keyboard.commitText("8", 1); assertEquals(index == 0 ? "78" : "59", field.getText().toString());
+            }
+        }
+        EditText seconds = fields.get(2); seconds.performClick();
+        seconds.onCreateInputConnection(new EditorInfo()).commitText("01:02:03", 1);
+        assertEquals("01", fields.get(0).getText().toString());
+        assertEquals("02", fields.get(1).getText().toString());
+        assertEquals("03", fields.get(2).getText().toString());
+    }
+
+    private static void tap(EditText field, float x) {
+        MotionEvent down = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, x, field.getHeight() / 2f, 0);
+        MotionEvent up = MotionEvent.obtain(0, 20, MotionEvent.ACTION_UP, x, field.getHeight() / 2f, 0);
+        try { field.dispatchTouchEvent(down); field.dispatchTouchEvent(up); }
+        finally { down.recycle(); up.recycle(); }
     }
 
     @Test public void pcHeaderFooterAndInlineEditorsRemainOnSmallScreen() throws Exception {

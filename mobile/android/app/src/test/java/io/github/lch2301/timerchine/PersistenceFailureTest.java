@@ -9,6 +9,7 @@ import io.github.lch2301.timerchine.core.PresetLibrary;
 import io.github.lch2301.timerchine.core.TimerEngine;
 import io.github.lch2301.timerchine.core.TimerSpec;
 import io.github.lch2301.timerchine.core.TimerState;
+import io.github.lch2301.timerchine.core.Track;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -108,9 +109,29 @@ public class PersistenceFailureTest {
         assertTrue(Shadows.shadowOf(alarms).getScheduledAlarms().isEmpty());
     }
 
-    @Test public void buildResetWriteFailureCannotSelectAnOlderPresetLibrary() throws Exception {
-        Snapshot latest = AppStore.load(context);
-        PresetLibrary.create(latest.presets, "새로 만든 프리셋");
+    @Test public void upgradeKeepsAllStateAndReservationsWithoutWritingOrUsingAnOlderBackup() throws Exception {
+        Snapshot latest = runningPair();
+        latest.useHourglass = false;
+        latest.externalLinksConfirmed = true;
+        latest.minimizeToBackground = false;
+        latest.closeBehaviorConfirmed = true;
+        String presetId = PresetLibrary.create(latest.presets, "새로 만든 프리셋").id;
+        TimerState first = latest.timers.get(0);
+        first.spec.name = "업데이트 후에도 유지";
+        first.spec.volume = 73;
+        first.spec.usePlaylist = first.spec.shuffle = true;
+        first.spec.presetId = presetId;
+        first.spec.soundUri = "content://media/audio/27";
+        first.spec.soundTitle = "저장한 알람음";
+        Track track = new Track("content://media/audio/28", "저장한 음악", false);
+        track.thumbnailPath = "/private/thumbnail.png";
+        first.spec.playlist.add(track);
+        latest.presets.get(1).items.add(track.copy());
+        latest.presets.get(1).shuffle = true;
+        first.playlistIndex = 0;
+        first.playbackOrder.add(0);
+        first.playbackPositionMs = 12345;
+        first.playbackSourceKey = first.spec.sourceKey();
         AppStore.save(context, latest);
         JSONObject oldBuild = new JSONObject(new String(Files.readAllBytes(stateFile(PRIMARY).toPath()), StandardCharsets.UTF_8));
         oldBuild.put("buildId", "previous compiled build");
@@ -118,11 +139,45 @@ public class PersistenceFailureTest {
         byte[] primary = Files.readAllBytes(stateFile(PRIMARY).toPath());
         byte[] previous = Files.readAllBytes(stateFile(PREVIOUS).toPath());
         FailingAtomicFileShadow.failWriteName = PREVIOUS;
-        assertThrows(IllegalStateException.class, () -> AppStore.load(context));
+        Snapshot restored = AppStore.load(context);
         assertArrayEquals(primary, Files.readAllBytes(stateFile(PRIMARY).toPath()));
         assertArrayEquals(previous, Files.readAllBytes(stateFile(PREVIOUS).toPath()));
-        Snapshot reset = AppStore.load(context);
-        assertEquals("새로 만든 프리셋", reset.presets.get(1).name);
+        assertEquals("새로 만든 프리셋", restored.presets.get(1).name);
+        assertEquals(12345, restored.timers.get(0).playbackPositionMs);
+        assertReservations(latest);
+        FailingAtomicFileShadow.reset();
+        AppStore.save(context, restored);
+        JSONObject rewritten = new JSONObject(new String(Files.readAllBytes(stateFile(PRIMARY).toPath()), StandardCharsets.UTF_8));
+        oldBuild.remove("buildId"); rewritten.remove("buildId");
+        assertEquals("Every saved field survives a changed build and the next save", oldBuild.toString(), rewritten.toString());
+    }
+
+    @Test public void missingBuildIdentityAndNewPreferencesKeepLegacyTimerValues() throws Exception {
+        Snapshot saved = runningPair();
+        JSONObject legacy = new JSONObject(new String(Files.readAllBytes(stateFile(PRIMARY).toPath()), StandardCharsets.UTF_8));
+        legacy.remove("buildId"); legacy.remove("minimizeToBackground"); legacy.remove("closeBehaviorConfirmed");
+        Files.write(stateFile(PRIMARY).toPath(), legacy.toString().getBytes(StandardCharsets.UTF_8));
+        Snapshot restored = AppStore.load(context);
+        assertEquals(saved.timers.get(0).spec.id, restored.timers.get(0).spec.id);
+        assertEquals(saved.timers.get(1).deadlineElapsedMs, restored.timers.get(1).deadlineElapsedMs);
+        assertNull(restored.minimizeToBackground);
+        assertFalse(restored.closeBehaviorConfirmed);
+        assertReservations(saved);
+    }
+
+    @Test public void olderBuildBackupRestoresSettingsWhenThePrimaryIsCorrupt() throws Exception {
+        Snapshot saved = runningPair();
+        saved.timers.get(0).spec.name = "이전 버전 백업";
+        AppStore.save(context, saved);
+        JSONObject backup = new JSONObject(new String(Files.readAllBytes(stateFile(PRIMARY).toPath()), StandardCharsets.UTF_8));
+        backup.put("buildId", "previous-version");
+        Files.write(stateFile(PREVIOUS).toPath(), backup.toString().getBytes(StandardCharsets.UTF_8));
+        Files.write(stateFile(PRIMARY).toPath(), "corrupt".getBytes(StandardCharsets.UTF_8));
+        Snapshot restored = AppStore.load(context);
+        assertEquals("이전 버전 백업", restored.timers.get(0).spec.name);
+        assertEquals(saved.timers.get(1).spec.id, restored.timers.get(1).spec.id);
+        assertTrue(restored.recoveryNotice.contains("백업"));
+        assertReservations(saved);
     }
 
     @Test public void corruptPrimaryStillRecoversItsValidatedBackup() throws Exception {

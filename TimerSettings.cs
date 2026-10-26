@@ -25,6 +25,8 @@ internal sealed class AppSettings
     public int Version { get; set; } = 5;
     public string BuildId { get; set; } = AppBuild.Id;
     public bool UseHourglass { get; set; } = true;
+    public bool ShowGameOverlay { get; set; } = true;
+    public GameOverlayAppearance OverlayAppearance { get; set; } = new();
     // A stored preference and the first-close explanation are separate states.
     // Saving another setting must never count as accepting that explanation.
     public bool? MinimizeToTray { get; set; }
@@ -35,6 +37,7 @@ internal sealed class AppSettings
 
     public void Normalize()
     {
+        OverlayAppearance = (OverlayAppearance ?? new()).Normalized();
         Timers ??= [];
         var ids = new HashSet<Guid>();
         for (var i = 0; i < Timers.Count; i++)
@@ -105,11 +108,9 @@ internal sealed class SettingsStore(string path)
             {
                 if (!File.Exists(candidate)) continue;
                 var json = File.ReadAllText(candidate);
-                using var document = JsonDocument.Parse(json);
-                // Every new build starts from defaults. Only restarts of this exact
-                // binary restore saved values, including explicitly assigned hotkeys.
-                if (!document.RootElement.TryGetProperty("BuildId", out var build)
-                    || build.GetString() != AppBuild.Id) return Defaults();
+                // BuildId is diagnostic metadata, never a reason to discard saved
+                // values. Missing new fields use their property defaults; Normalize
+                // carries older documents into the current settings schema.
                 var settings = JsonSerializer.Deserialize<AppSettings>(json) ?? throw new JsonException();
                 settings.Normalize();
                 return settings;
@@ -156,6 +157,6 @@ internal sealed class SettingsStore(string path)
 
 internal static class AppBuild
 {
-    // The deterministic module ID changes when this program's compiled source changes.
+    // Diagnostic identity only. A different binary must still restore saved settings.
     public static string Id { get; } = typeof(AppSettings).Assembly.ManifestModule.ModuleVersionId.ToString("N");
 }

@@ -12,7 +12,7 @@ internal sealed record PlaylistPreset
     public string DisplayName => $"{Name}  ·  파일 {Items.Count}개";
 }
 
-// Presets are a shared library, independent of a timer and the per-build settings reset.
+// Presets are a shared library, independent of a timer and the app's compiled version.
 internal sealed class PlaylistPresetStore(string path)
 {
     public const string DefaultName = "기본 프리셋";

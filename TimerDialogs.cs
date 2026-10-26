@@ -38,6 +38,26 @@ internal class DeleteConfirmationForm : TimerPopupForm
 
 internal class VisualSettingsForm : TimerPopupForm
 {
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        FitHeight(MainWorkingArea.Height - (int)Math.Round(24 * DeviceDpi / 96d));
+    }
+
+    private void FitHeight(int maximum)
+    {
+        if (Height <= maximum || Controls.Count == 0) return;
+        AutoSize = false;
+        AutoScroll = true;
+        Controls[0].Dock = DockStyle.Top;
+        Height = Math.Max(240, maximum);
+        AutoScrollMargin = new Size(0, 12);
+        PerformLayout();
+        ActiveControl = HourglassCheckBox;
+        AutoScrollPosition = Point.Empty;
+        KeepPopupOnScreen();
+    }
+
     public CheckBox HourglassCheckBox { get; } = new PopupCheckBox() {
         Text = "모래시계 표시", AutoSize = true, Margin = new Padding(0, 0, 0, 12)
     };
@@ -48,12 +68,16 @@ internal class VisualSettingsForm : TimerPopupForm
         Text = "다운로드 및 개인 알람 이용 권한을 확인했습니다.",
         AutoSize = true, Margin = Padding.Empty, Enabled = ExternalLinkPolicy.IsEnabled
     };
+    public CheckBox GameOverlayCheckBox { get; } = new PopupCheckBox() {
+        Text = "게임 오버레이 표시", AutoSize = true, Margin = new Padding(0, 0, 0, 12)
+    };
+    public Button OverlaySettingsButton { get; } = TimerTheme.Button("오버레이 설정");
 
-    public VisualSettingsForm(bool enabled, bool minimizeToTray, bool externalLinksConfirmed,
-        Func<bool, bool, bool, string?> save)
+    public VisualSettingsForm(bool enabled, bool minimizeToTray, bool externalLinksConfirmed, bool showGameOverlay,
+        Func<bool, bool, bool, bool, string?> save, Action? openOverlaySettings = null)
     {
         DialogLayout.Configure(this, "설정", 560);
-        var layout = DialogLayout.Create(7);
+        var layout = DialogLayout.Create(8);
         layout.Controls.Add(DialogLayout.Header("앱 설정", "설정", "타이머 표시와 창을 닫는 방식을 선택하세요."), 0, 0);
         var card = DialogLayout.Section(2);
         HourglassCheckBox.Checked = enabled;
@@ -67,6 +91,18 @@ internal class VisualSettingsForm : TimerPopupForm
         trayCard.Controls.Add(DialogLayout.Description(
             "닫기(X)나 최소화 버튼을 누르면 트레이로 보냅니다.\n타이머와 알람, 단축키는 계속 동작합니다."), 0, 1);
         layout.Controls.Add(trayCard, 0, 2);
+        var overlayCard = DialogLayout.Section(3);
+        GameOverlayCheckBox.Checked = showGameOverlay;
+        overlayCard.Controls.Add(GameOverlayCheckBox, 0, 0);
+        overlayCard.Controls.Add(DialogLayout.Description(
+            "게임 화면에 이름과 남은 시간을 표시합니다. 위치·투명도·글자 크기와 이름 정렬을 조절할 수 있습니다.\n창모드·테두리 없는 전체화면을 지원하며, 브라우저와 일반 창에서는 숨깁니다."), 0, 1);
+        OverlaySettingsButton.Anchor = AnchorStyles.Left;
+        OverlaySettingsButton.Margin = new Padding(0, 14, 0, 0);
+        TimerTheme.SetIcon(OverlaySettingsButton, TimerGlyph.Settings);
+        OverlaySettingsButton.Enabled = openOverlaySettings is not null;
+        OverlaySettingsButton.Click += (_, _) => openOverlaySettings?.Invoke();
+        overlayCard.Controls.Add(OverlaySettingsButton, 0, 2);
+        layout.Controls.Add(overlayCard, 0, 3);
         var license = new LinkLabel {
             Text = "글꼴 · 오디오 엔진 라이선스", AutoSize = true,
             LinkColor = TimerTheme.Muted, ActiveLinkColor = TimerTheme.Accent,
@@ -94,16 +130,16 @@ internal class VisualSettingsForm : TimerPopupForm
         ExternalLinkCheckBox.Margin = new Padding(0, 0, 0, 12);
         externalLinkCard.Controls.Add(ExternalLinkCheckBox, 0, 0);
         externalLinkCard.Controls.Add(usage, 0, 1);
-        layout.Controls.Add(externalLinkCard, 0, 3);
-        layout.Controls.Add(informationLinks, 0, 4);
+        layout.Controls.Add(externalLinkCard, 0, 4);
+        layout.Controls.Add(informationLinks, 0, 5);
         var error = DialogLayout.Error();
-        layout.Controls.Add(error, 0, 5);
+        layout.Controls.Add(error, 0, 6);
         layout.Controls.Add(DialogLayout.Actions(this, () => {
-            var message = save(HourglassCheckBox.Checked, TrayCheckBox.Checked, ExternalLinkCheckBox.Checked);
+            var message = save(HourglassCheckBox.Checked, TrayCheckBox.Checked, ExternalLinkCheckBox.Checked, GameOverlayCheckBox.Checked);
             if (message is not null) { error.Text = message; return; }
             DialogResult = DialogResult.OK;
             Close();
-        }), 0, 6);
+        }), 0, 7);
         DialogLayout.Complete(this, layout);
     }
 }

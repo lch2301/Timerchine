@@ -48,7 +48,7 @@ internal static class DurationInputChecks
         Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
         try
         {
-            CheckCards(); CheckStarts();
+            CheckCards(); CheckStarts(); CheckOnesFirst();
             File.WriteAllText(Path.Combine(output, "checks.json"), JsonSerializer.Serialize(new { Passed = passed }, new JsonSerializerOptions { WriteIndented = true }));
             return 0;
         }
@@ -153,6 +153,47 @@ internal static class DurationInputChecks
         Require(cards.All(Highlighted) && cards.All(card => !card.TimeInput.ReadOnly), "All-stop did not restore all hints");
         Picture(main, "all-stopped");
         Pass("Individual start/stop and all-start/all-stop toggle hints per timer; layout and both display modes remain stable");
+    }
+
+    private static void CheckOnesFirst()
+    {
+        using var form = new Form();
+        using var input = new TimerDurationInput { Size = new Size(330, 80) };
+        form.Controls.Add(input); Show(form);
+        var parts = Field<TextBox[]>(input, "parts");
+        var mouse = typeof(Control).GetMethod("OnMouseUp", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        var press = typeof(Control).GetMethod("OnKeyPress", BindingFlags.Instance | BindingFlags.NonPublic)!;
+        foreach (var index in Enumerable.Range(0, 3))
+        {
+            foreach (var digitPosition in new[] { 0, 1 })
+            {
+                input.EndEdit(12 * 3600 + 34 * 60 + 56);
+                var part = parts[index]; part.Focus(); Application.DoEvents();
+                part.Select(digitPosition, 0);
+                mouse.Invoke(part, [new MouseEventArgs(MouseButtons.Left, 1, digitPosition == 0 ? 1 : part.Width - 1, 1, 0)]);
+                Require(part.SelectionLength == part.TextLength, "Click must select the whole time component");
+                press.Invoke(part, [new KeyPressEventArgs('1')]);
+                Require(part.Text == "01", "First digit must begin at ones regardless of clicked position");
+                press.Invoke(part, [new KeyPressEventArgs('2')]);
+                Require(part.Text == "12", "Second digit must extend the value from the right");
+                var expected = new[] { 12, 34, 56 }; expected[index] = 12;
+                Require(input.PendingSeconds == expected[0] * 3600 + expected[1] * 60 + expected[2], "Other components changed");
+                part.Select(0, 0); mouse.Invoke(part, [new MouseEventArgs(MouseButtons.Left, 1, 1, 1, 0)]);
+                press.Invoke(part, [new KeyPressEventArgs('7')]);
+                Require(part.Text == "07", "Repeated click on a focused component must restart at ones");
+                press.Invoke(part, [new KeyPressEventArgs('8')]);
+                Require(part.Text == (index == 0 ? "78" : "59"), "Duration bounds changed");
+            }
+        }
+        parts[0].Text = "01:02:03";
+        Require(input.PendingSeconds == 3723, "HH:MM:SS clipboard paste must still work");
+        input.EndEdit(0); parts[2].SelectAll();
+        press.Invoke(parts[2], [new KeyPressEventArgs('0')]);
+        Require(input.IsEditing && input.PendingSeconds == 0, "Explicit zero entry must remain valid");
+        input.ReadOnly = true;
+        press.Invoke(parts[2], [new KeyPressEventArgs('9')]);
+        Require(parts[2].Text == "00", "Running timer became editable");
+        Pass("Clicks on either digit and repeated clicks restart at ones in every component; padding, bounds, paste and read-only state remain valid");
     }
 
     private sealed class Sound : IAlarmPlayer

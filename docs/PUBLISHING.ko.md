@@ -11,7 +11,7 @@ git clone https://github.com/lch2301/Timerchine.git
 cd Timerchine
 .\Build\Fetch-Media.ps1
 dotnet restore IntervalTimer.csproj -r win-x64
-dotnet publish IntervalTimer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o dist/Timerchine-1.2.0-win-x64
+dotnet publish IntervalTimer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o dist/Timerchine-1.3.0-win-x64
 ```
 
 미디어 복원 스크립트는 공식 배포처의 고정 버전 파일을 받아 `Assets/Media/integrity.json`의 SHA256으로 검증합니다. 같은 원본 파일을 이미 보관하고 있다면 `-SourceDirectory`로 복원할 수 있습니다.
@@ -22,7 +22,7 @@ dotnet publish IntervalTimer.csproj -c Release -r win-x64 --self-contained true 
 
 ```powershell
 .\Build\Fetch-Media.ps1 -IncludeOnlineTools:$false
-dotnet publish IntervalTimer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:EnableExternalLinks=false -o dist/Timerchine-1.2.0-local-win-x64
+dotnet publish IntervalTimer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -p:EnableExternalLinks=false -o dist/Timerchine-1.3.0-local-win-x64
 ```
 
 이 빌드에서는 yt-dlp와 Deno가 제외됩니다. FFmpeg와 ffprobe는 로컬 오디오 재생에 계속 사용됩니다.
@@ -36,9 +36,12 @@ dotnet publish IntervalTimer.csproj -c Release -r win-x64 --self-contained true 
 ```powershell
 dotnet run --project Verification/DurationInputChecks/DurationInputChecks.csproj -c Release -- Verification/results/duration-input
 dotnet run --project Verification/PresetChecks/PresetChecks.csproj -c Release -- Verification/results/presets
+
+dotnet run --project Verification/OverlayChecks/OverlayChecks.csproj -c Release -- Verification/results/overlay
+dotnet run --project Verification/SettingsUpgradeChecks/SettingsUpgradeChecks.csproj -c Release -- Verification/results/settings-upgrade
 ```
 
-검증은 Windows에서 실행하며, 출력 경로는 실행마다 새로운 폴더를 사용합니다. 실제 오디오 장치와 외부 링크, 사용하는 게임에서의 단축키 동작은 사용 환경에서 확인할 수 있습니다.
+검증은 Windows에서 실행하며, 출력 경로는 실행마다 새로운 폴더를 사용합니다. 오버레이 검사는 분류 정책·알파 렌더링·클릭 통과·포커스 유지·실제 OpenGL 테스트 창의 감지와 설정 저장을 확인합니다. 실제 오디오 장치와 외부 링크, 개별 게임에서의 오버레이·단축키 동작은 사용하는 환경에서 추가로 확인할 수 있습니다.
 
 ## 수정본의 배포
 

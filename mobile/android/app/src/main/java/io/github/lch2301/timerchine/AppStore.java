@@ -27,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** App-private state; like desktop, a changed compiled build resets timer settings. */
+/** App-private state. App updates retain settings, timers, presets and playback state. */
 public final class AppStore {
     private static final String FILE_NAME = "timerchine-state.json";
     private static final String PREVIOUS_FILE_NAME = "timerchine-state.previous.json";
@@ -38,7 +38,7 @@ public final class AppStore {
         AtomicFile primary = file(context, FILE_NAME);
         AtomicFile previous = file(context, PREVIOUS_FILE_NAME);
         boolean damaged = false;
-        StoredState stored = null;
+        Snapshot stored = null;
         try {
             stored = readStored(primary);
         } catch (FileNotFoundException missing) {
@@ -46,9 +46,9 @@ public final class AppStore {
         } catch (IOException | JSONException | RuntimeException error) {
             damaged = true;
         }
-        // A reset write can fail even when the saved document is valid. Such a
-        // failure must reach the caller instead of selecting an older backup.
-        if (stored != null) return forCurrentBuild(context, stored);
+        // Reading an older build must not rewrite the valid primary or cancel
+        // its alarm reservations. Build identity is diagnostic metadata only.
+        if (stored != null) return stored;
         try {
             stored = readStored(previous);
         } catch (FileNotFoundException missing) {
@@ -57,7 +57,7 @@ public final class AppStore {
             damaged = true;
         }
         if (stored != null) {
-            Snapshot recovered = forCurrentBuild(context, stored);
+            Snapshot recovered = stored;
             recovered.recoveryNotice = "저장된 설정을 백업에서 복원했습니다.";
             return recovered;
         }
@@ -296,30 +296,8 @@ public final class AppStore {
 
     private static String nonNull(String text) { return text == null ? "" : text; }
 
-    private static final class StoredState {
-        final Snapshot snapshot;
-        final String buildId;
-        StoredState(Snapshot snapshot, String buildId) {
-            this.snapshot = snapshot;
-            this.buildId = buildId;
-        }
-    }
-
-    private static StoredState readStored(AtomicFile file) throws IOException, JSONException {
-        byte[] bytes = file.readFully();
-        Snapshot stored = decode(bytes);
-        JSONObject root = new JSONObject(new String(bytes, StandardCharsets.UTF_8));
-        return new StoredState(stored, root.optString("buildId", ""));
-    }
-
-    private static Snapshot forCurrentBuild(Context context, StoredState stored) {
-        if (buildIdentity(context).equals(stored.buildId)) return stored.snapshot;
-        Snapshot defaults = new Snapshot();
-        defaults.presets = stored.snapshot.presets;
-        PresetLibrary.ensureDefault(defaults.presets);
-        save(context, defaults);
-        for (TimerState timer : stored.snapshot.timers) AlarmScheduler.cancel(context, timer.spec.id);
-        return defaults;
+    private static Snapshot readStored(AtomicFile file) throws IOException, JSONException {
+        return decode(file.readFully());
     }
 
     private static String buildIdentity(Context context) {

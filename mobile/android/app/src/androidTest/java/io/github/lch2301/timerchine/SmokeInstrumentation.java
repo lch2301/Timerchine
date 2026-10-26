@@ -62,7 +62,7 @@ public final class SmokeInstrumentation extends Instrumentation {
             runCase("restartRetainsMusicCursorAndResetsCountdown", this::cursorRestart);
             runCase("normalAlarmAlwaysStartsAtTrackBeginning", this::normalRestartsFromBeginning);
             runCase("selectedPresetAndPlaylistSurviveStoreReload", this::presetPersistence);
-            runCase("buildResetKeepsPresetsAndBackupRecoversSettings", this::buildResetAndBackup);
+            runCase("appUpgradeKeepsSettingsAndBackupRecoversSettings", this::upgradeAndBackup);
             result.putString("stream", "\nOK (" + TEST_COUNT + " tests)\n");
         } catch (Throwable failure) {
             Bundle failed = status(activeTest);
@@ -204,7 +204,7 @@ public final class SmokeInstrumentation extends Instrumentation {
         runOnMainSync(() -> TimerController.stop(target, alarm.spec.id));
     }
 
-    private void buildResetAndBackup() throws Exception {
+    private void upgradeAndBackup() throws Exception {
         runOnMainSync(() -> TimerController.shutdown(target));
         Snapshot snapshot = AppStore.load(target);
         int presetCount = snapshot.presets.size();
@@ -220,13 +220,13 @@ public final class SmokeInstrumentation extends Instrumentation {
         JSONObject previousBuild = new JSONObject(new String(Files.readAllBytes(primary.toPath()), StandardCharsets.UTF_8));
         previousBuild.put("buildId", "an older compiled build");
         Files.write(primary.toPath(), previousBuild.toString().getBytes(StandardCharsets.UTF_8));
-        Snapshot reset = AppStore.load(target);
-        check(reset.timers.size() == 1 && reset.timers.get(0).spec.durationSeconds == 0
-                && reset.timers.get(0).phase == TimerState.Phase.IDLE
-                && reset.minimizeToBackground == null && !reset.closeBehaviorConfirmed,
-                "A changed compiled build must reset desktop timer/app preferences.");
-        check(reset.presets.size() == presetCount, "A changed compiled build must preserve the separate preset library.");
-        runOnMainSync(() -> { AppStore.save(target, reset); AppStore.save(target, reset); });
+        Snapshot restored = AppStore.load(target);
+        check(restored.timers.size() == snapshot.timers.size() && restored.timers.get(0).spec.durationSeconds == 37
+                && restored.timers.get(0).spec.id.equals(snapshot.timers.get(0).spec.id)
+                && Boolean.FALSE.equals(restored.minimizeToBackground) && restored.closeBehaviorConfirmed,
+                "A changed compiled build must preserve timer and app preferences.");
+        check(restored.presets.size() == presetCount, "A changed compiled build must preserve the preset library.");
+        runOnMainSync(() -> { AppStore.save(target, restored); AppStore.save(target, restored); });
         Files.write(primary.toPath(), new byte[] {'b','r','o','k','e','n'});
         Snapshot recovered = AppStore.load(target);
         check(recovered.presets.size() == presetCount && recovered.recoveryNotice.contains("백업"),

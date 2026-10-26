@@ -4,12 +4,14 @@
 
 ## 다운로드 자료의 구분
 
-- `Timerchine-1.2.0-win-x64.zip`: Windows x64용 실행 파일, 사용 안내와 라이선스 고지
-- `Timerchine-1.2.0-source.zip`: 타이머신 앱 소스, 리소스, 빌드·검증 자료
+- `Timerchine-1.3.0-win-x64.zip`: Windows x64용 실행 파일, 사용 안내와 라이선스 고지
+- `Timerchine-1.3.0-source.zip`: 타이머신 Windows 앱 소스, 리소스, 빌드·검증 자료
 - `Timerchine-1.2.0-third-party-source-materials.zip`: 사용한 외부 도구의 고정 버전 원본 소스와 빌드 자료
 - `SHA256SUMS.txt`: 다운로드 파일의 SHA256 목록
 
 GitHub의 자동 생성 Source code ZIP에는 저장소의 파일이 들어 있습니다. 앱 소스와 제3자 소스 자료는 위 파일 이름으로 구분할 수 있습니다.
+
+Windows 1.3.0은 1.2.0과 같은 버전의 외부 미디어 도구를 포함합니다. 해당 도구의 소스 자료는 [1.2.0 릴리스의 제3자 소스 ZIP](https://github.com/lch2301/Timerchine/releases/download/v.1.2.0/Timerchine-1.2.0-third-party-source-materials.zip)에서 받을 수 있습니다. 게임 오버레이와 오버레이 설정은 Windows 기본 API를 사용하며 별도 외부 프로그램을 추가하지 않습니다.
 
 ## 구성요소의 원본 자료
 

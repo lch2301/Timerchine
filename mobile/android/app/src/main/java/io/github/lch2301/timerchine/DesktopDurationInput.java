@@ -8,6 +8,7 @@ import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -20,8 +21,8 @@ import java.util.function.IntConsumer;
 final class DesktopDurationInput extends LinearLayout {
     final EditText[] parts=new EditText[3];private final DesktopTheme theme;private boolean syncing,dirty,readOnly;private int value;private IntConsumer committed;
     DesktopDurationInput(Context context){super(context);theme=new DesktopTheme(context);setGravity(Gravity.CENTER_VERTICAL);setOrientation(HORIZONTAL);
-        for(int i=0;i<3;i++){final int index=i;EditText field=new EditText(context);field.setSingleLine(true);field.setText("00");field.setTextSize(28);field.setTypeface(theme.time);field.setTextColor(DesktopTheme.FOREGROUND);field.setGravity(Gravity.CENTER);field.setPadding(0,theme.dp(3),0,theme.dp(3));field.setMinWidth(0);field.setMinimumWidth(0);field.setSelectAllOnFocus(true);field.setRawInputType(InputType.TYPE_CLASS_NUMBER);field.setKeyListener(DigitsKeyListener.getInstance("0123456789:："));field.setImeOptions(i==2?EditorInfo.IME_ACTION_DONE:EditorInfo.IME_ACTION_NEXT);field.setContentDescription(new String[]{"타이머 시간","타이머 분","타이머 초"}[i]);parts[i]=field;addView(field,new LayoutParams(0,-2,1));
-            field.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int c,int f){}public void onTextChanged(CharSequence s,int start,int before,int count){}public void afterTextChanged(Editable text){if(syncing||readOnly)return;dirty=true;String typed=text.toString();String[] pasted=typed.split("[:：]",-1);if(pasted.length==3){syncing=true;for(int p=0;p<3;p++)parts[p].setText(two(parse(pasted[p],p)));syncing=false;}else if(typed.endsWith(":")||typed.endsWith("：")){syncing=true;field.setText(two(parse(typed.substring(0,typed.length()-1),index)));syncing=false;if(index<2)parts[index+1].requestFocus();}else if(text.length()>0){int bounded=parse(typed,index);if(!typed.equals(String.valueOf(bounded))&&!typed.equals(two(bounded))){syncing=true;field.setText(two(bounded));field.setSelection(field.length());syncing=false;}}}});
+        for(int i=0;i<3;i++){final int index=i;EditText field=new DurationPart(context);field.setSingleLine(true);field.setText("00");field.setTextSize(28);field.setTypeface(theme.time);field.setTextColor(DesktopTheme.FOREGROUND);field.setGravity(Gravity.CENTER);field.setPadding(0,theme.dp(3),0,theme.dp(3));field.setMinWidth(0);field.setMinimumWidth(0);field.setSelectAllOnFocus(true);field.setRawInputType(InputType.TYPE_CLASS_NUMBER);field.setKeyListener(DigitsKeyListener.getInstance("0123456789:："));field.setImeOptions(i==2?EditorInfo.IME_ACTION_DONE:EditorInfo.IME_ACTION_NEXT);field.setContentDescription(new String[]{"타이머 시간","타이머 분","타이머 초"}[i]);parts[i]=field;addView(field,new LayoutParams(0,-2,1));
+            field.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int c,int f){}public void onTextChanged(CharSequence s,int start,int before,int count){}public void afterTextChanged(Editable text){if(syncing||readOnly)return;dirty=true;String typed=text.toString();String[] pasted=typed.split("[:：]",-1);if(pasted.length==3){syncing=true;for(int p=0;p<3;p++)parts[p].setText(two(parse(pasted[p],p)));syncing=false;}else if(typed.endsWith(":")||typed.endsWith("：")){syncing=true;field.setText(two(parse(typed.substring(0,typed.length()-1),index)));syncing=false;if(index<2)parts[index+1].requestFocus();}else if(text.length()>0){int bounded=parse(typed,index);if(!typed.equals(two(bounded))){syncing=true;field.setText(two(bounded));field.setSelection(field.length());syncing=false;}}}});
             field.setOnFocusChangeListener((v,focused)->{if(!focused){syncing=true;field.setText(two(parse(field.getText().toString(),index)));syncing=false;post(()->{if(!hasFocus())commit();});}});
             field.setOnEditorActionListener((v,action,event)->{if(action==EditorInfo.IME_ACTION_DONE||(event!=null&&event.getKeyCode()==KeyEvent.KEYCODE_ENTER)){commit();clearEditors();return true;}if(action==EditorInfo.IME_ACTION_NEXT&&index<2){parts[index+1].requestFocus();return true;}return false;});
             field.setOnKeyListener((v,key,event)->{if(event.getAction()!=KeyEvent.ACTION_DOWN||readOnly)return false;if(key==KeyEvent.KEYCODE_DPAD_UP||key==KeyEvent.KEYCODE_DPAD_DOWN){field.setText(two(Math.max(0,Math.min(index==0?99:59,parse(field.getText().toString(),index)+(key==KeyEvent.KEYCODE_DPAD_UP?1:-1)))));field.selectAll();return true;}if(key==KeyEvent.KEYCODE_DPAD_RIGHT&&index<2&&field.getSelectionStart()==field.length()&&field.getSelectionEnd()==field.length()){parts[index+1].requestFocus();return true;}if(key==KeyEvent.KEYCODE_DPAD_LEFT&&index>0&&field.getSelectionStart()==0&&field.getSelectionEnd()==0){parts[index-1].requestFocus();return true;}return false;});
@@ -40,4 +41,19 @@ final class DesktopDurationInput extends LinearLayout {
     int configuredValue(){return value;}
     private static int parse(String text,int index){try{return(int)Math.max(0,Math.min(index==0?99:59,Long.parseLong(text.trim())));}catch(NumberFormatException invalid){return text.trim().matches("[0-9]+")?(index==0?99:59):0;}}
     private static String two(int value){return String.format(Locale.ROOT,"%02d",value);}
+
+    /** Select the whole component after Android's native caret hit test, even on repeated taps. */
+    private static final class DurationPart extends EditText {
+        DurationPart(Context context) { super(context); }
+        @Override public boolean onTouchEvent(MotionEvent event) {
+            boolean handled = super.onTouchEvent(event);
+            if (event.getActionMasked() == MotionEvent.ACTION_UP && isFocusable() && isEnabled()) selectAll();
+            return handled;
+        }
+        @Override public boolean performClick() {
+            boolean handled = super.performClick();
+            if (isFocusable() && isEnabled()) selectAll();
+            return handled;
+        }
+    }
 }

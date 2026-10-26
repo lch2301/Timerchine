@@ -36,6 +36,7 @@ internal class MultiTimerForm : Form, IMessageFilter
     private ContextMenuStrip? trayMenu;
     private bool exitRequested;
     private FormWindowState restoreWindowState = FormWindowState.Normal;
+    private GameOverlayController? gameOverlay;
 
     public MultiTimerForm(SettingsStore? store = null, TimeProvider? clock = null, Func<IAlarmPlayer>? alarmFactory = null)
     {
@@ -149,6 +150,9 @@ internal class MultiTimerForm : Form, IMessageFilter
             ResizeCards();
             InitializeHotkeys();
             ticker.Start();
+            gameOverlay ??= new GameOverlayController(() => cards.Select(card => new OverlayTimerRow(
+                card.Configuration.Name, card.Session.RemainingSeconds)).ToArray(), settings.ShowGameOverlay,
+                appearance: () => settings.OverlayAppearance);
         };
         AutoScaleDimensions = new SizeF(96F, 96F);
         ResumeLayout(performLayout: true);
@@ -169,6 +173,9 @@ internal class MultiTimerForm : Form, IMessageFilter
                 if (key == Keys.Enter && input?.FindForm() is AlarmSettingsForm alarmDialog
                     && alarmDialog.IsVolumeInputTarget(input)) return false;
                 if (input?.FindForm() is PlaylistPresetsForm) return false;
+                if (input?.FindForm() is OverlaySettingsForm) return false;
+                if (input?.FindForm() is VisualSettingsForm visualDialog
+                    && input == visualDialog.OverlaySettingsButton) return false;
                 if (input?.FindForm() is PlaylistSettingsForm playlistDialog
                     && ((key == Keys.Enter && playlistDialog.IsEditorTarget(input))
                         || (key == Keys.Space && playlistDialog.IsPathTarget(input)))) return false;
@@ -434,29 +441,53 @@ internal class MultiTimerForm : Form, IMessageFilter
         if (settingsOpen) return;
         RunSettingsDialog(() => {
             using var dialog = new VisualSettingsForm(settings.UseHourglass, settings.MinimizeToTray ?? false,
-                settings.ExternalLinksConfirmed, SaveVisualSettings);
+                settings.ExternalLinksConfirmed, settings.ShowGameOverlay, SaveVisualSettings, OpenOverlaySettings);
             dialog.ShowDialog(this);
         });
     }
 
-    private string? SaveVisualSettings(bool enabled, bool minimizeToTray, bool externalLinksConfirmed)
+    private void OpenOverlaySettings()
+    {
+        var owner = Form.ActiveForm ?? this;
+        using var dialog = new OverlaySettingsForm(settings.OverlayAppearance, SaveOverlayAppearance);
+        dialog.ShowDialog(owner);
+    }
+
+    private string? SaveOverlayAppearance(GameOverlayAppearance appearance)
+    {
+        var previous = settings.OverlayAppearance;
+        settings.OverlayAppearance = appearance.Normalized();
+        try { store.Save(settings); }
+        catch (Exception ex)
+        {
+            settings.OverlayAppearance = previous;
+            return $"오버레이 설정을 저장할 수 없습니다.\n{ex.Message}";
+        }
+        return null;
+    }
+
+    private string? SaveVisualSettings(bool enabled, bool minimizeToTray, bool externalLinksConfirmed, bool showGameOverlay)
     {
         var previous = settings.UseHourglass;
         var previousTray = settings.MinimizeToTray;
         var previousConfirmation = settings.ExternalLinksConfirmed;
+        var previousOverlay = settings.ShowGameOverlay;
         settings.UseHourglass = enabled;
         settings.MinimizeToTray = minimizeToTray;
         settings.ExternalLinksConfirmed = externalLinksConfirmed;
+        settings.ShowGameOverlay = showGameOverlay;
         try { store.Save(settings); }
         catch (Exception ex)
         {
             settings.UseHourglass = previous;
             settings.MinimizeToTray = previousTray;
             settings.ExternalLinksConfirmed = previousConfirmation;
+            settings.ShowGameOverlay = previousOverlay;
             return $"설정을 저장할 수 없습니다.\n{ex.Message}";
         }
         ExternalLinkPolicy.UsageConfirmed = settings.ExternalLinksConfirmed;
         foreach (var card in cards) card.SetHourglassMode(enabled);
+        gameOverlay?.SetEnabled(settings.ShowGameOverlay);
         ResizeCards();
         return null;
     }
@@ -616,6 +647,7 @@ internal class MultiTimerForm : Form, IMessageFilter
             Application.RemoveMessageFilter(this);
             ticker.Stop();
             ticker.Dispose();
+            gameOverlay?.Dispose();
             hotkeys?.Dispose();
             actionChime.Dispose();
             if (trayIcon is not null) { trayIcon.Visible = false; trayIcon.Dispose(); }
